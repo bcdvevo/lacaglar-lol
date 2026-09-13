@@ -46,14 +46,34 @@
 
   <section class="wrap how">
     <h2>Nasıl bağış yapılır</h2>
-    <ol>
-      <li id="stepPay"></li>
-      <li>Dekontu ve tişörte yazılacak ismi bize gönder.</li>
-      <li>Dekont doğrulanınca adın listeye ve tişörte girer.</li>
+    <ol class="steps">
+      <li>
+        <strong>Tişörte yazılmasını istediğin ismi yaz.</strong> Sana bir e-posta adresi veriyoruz.
+        <div class="gen">
+          <input id="nameInput" type="text" maxlength="24" placeholder="Acme Yazılım" autocomplete="off"
+                 aria-label="Tişörte yazılacak isim">
+          <output id="genAddr" class="addr">—</output>
+          <button id="copyAddr" type="button" class="copy">Kopyala</button>
+        </div>
+        <p class="hint" id="genHint">En fazla 24 karakter. Bu adres senin bağışını tanır; başka hiçbir yere kaydedilmez.</p>
+      </li>
+      <li>
+        <strong>LÖSEV'in bağış sayfasından bağışını yap.</strong>
+        <span id="onlineLine"></span>
+        Formdaki <em>Email Adresi</em> alanına yukarıdaki adresi yaz.
+      </li>
+      <li>
+        <strong>Bitti.</strong> LÖSEV makbuzu o adrese gönderiyor, biz doğrulayıp adını listeye
+        ve tişörte ekliyoruz.
+      </li>
     </ol>
-    <div class="bank" id="bank" hidden></div>
-    <a class="cta" id="reportLink" href="#" hidden>Bağışımı bildir</a>
-    <p class="sub" id="reportHint" hidden></p>
+    <details class="alt">
+      <summary>Kartla ödemek istemiyorsan: havale ile bağış</summary>
+      <div id="stepPay"></div>
+      <div class="bank" id="bank" hidden></div>
+      <a class="cta" id="reportLink" href="#" hidden>Bağışımı bildir</a>
+      <p class="sub" id="reportHint" hidden></p>
+    </details>
   </section>
 
   <section class="wrap">

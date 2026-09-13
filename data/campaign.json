@@ -26,5 +26,6 @@
     "bank": "Ziraat Bankası, Ankara G.O.P. Şubesi (2211)",
     "iban": "TR79 0001 0022 1103 4585 1850 47",
     "note": "Bağış doğrudan LÖSEV hesabına yapılır. Bu site hiçbir ödeme almaz."
-  }
+  },
+  "mailDomain": "lacaglar.lol"
 }

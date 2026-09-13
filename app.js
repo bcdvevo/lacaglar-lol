@@ -94,6 +94,7 @@
     renderNotice(c);
     renderBank(c, ngo);
     renderReport(c, ngo);
+    setupGenerator(c);
   }
 
   /* Yumuşak açılış: LÖSEV onayı gelene kadar hesap bilgileri ve bildirim
@@ -106,10 +107,52 @@
       "Kuralları ve tişörtü şimdi inceleyebilirsin; hesap bilgileri açılışta yayınlanacak.";
   }
 
+  /* Benzersiz adres üreteci. Adresin yerel kısmı ismin kendisi: eşleştirme
+     tablosu tutmak gerekmiyor, dolayısıyla sunucu da gerekmiyor. */
+  var TR = { "ı": "i", "İ": "i", "ş": "s", "Ş": "s", "ğ": "g", "Ğ": "g",
+             "ü": "u", "Ü": "u", "ö": "o", "Ö": "o", "ç": "c", "Ç": "c" };
+  function slugify(v) {
+    var out = String(v).split("").map(function (ch) { return TR[ch] || ch; }).join("");
+    out = out.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    out = out.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+    return out.slice(0, 24).replace(/-+$/, "");
+  }
+
+  function setupGenerator(c) {
+    var input = document.getElementById("nameInput");
+    var out = document.getElementById("genAddr");
+    var btn = document.getElementById("copyAddr");
+    var hint = document.getElementById("genHint");
+    if (!input || !c.mailDomain) return;
+
+    function update() {
+      var slug = slugify(input.value);
+      if (!slug) { out.textContent = "—"; btn.disabled = true; return; }
+      out.textContent = slug + "@" + c.mailDomain;
+      btn.disabled = false;
+    }
+    input.addEventListener("input", update);
+    btn.addEventListener("click", function () {
+      navigator.clipboard.writeText(out.textContent).then(function () {
+        btn.textContent = "Kopyalandı";
+        setTimeout(function () { btn.textContent = "Kopyala"; }, 1600);
+      }).catch(function () {
+        hint.textContent = "Kopyalanamadı, adresi elle seç.";
+      });
+    });
+    update();
+  }
+
   function renderBank(c, ngo) {
     var el = document.getElementById("bank");
     var step = document.getElementById("stepPay");
+    var online = document.getElementById("onlineLine");
     var code = ngo.campaignCode || "";
+
+    if (online && ngo.donateUrl) {
+      online.innerHTML = '<a href="' + esc(ngo.donateUrl) + '" target="_blank" rel="noopener">' +
+        esc(ngo.name) + " tek seferlik bağış sayfası</a>.";
+    }
 
     if (!c.donationsOpen || !ngo.iban) {
       el.hidden = true;
@@ -118,10 +161,9 @@
       return;
     }
     el.hidden = false;
-    step.innerHTML = "Aşağıdaki hesaba <strong>havale veya EFT</strong> yap. Açıklamaya " +
-      "<code>" + esc(code) + "</code> ve tişörte yazılmasını istediğin ismi yaz. " +
-      "Kredi kartıyla online bağışta açıklama alanı olmadığı için hangi bağışın kime ait " +
-      "olduğunu ayırt edemiyoruz; bu yüzden yalnızca havale kabul ediyoruz.";
+    step.innerHTML = "Kart formundaki TC kimlik ve adres alanlarını doldurmak istemiyorsan " +
+      "havale de yapabilirsin. Açıklamaya <code>" + esc(code) + "</code> ve tişörte " +
+      "yazılmasını istediğin ismi yaz, sonra dekontu bize gönder.";
     el.innerHTML = "<dl>" +
       row("Hesap adı", ngo.fullName || ngo.name) +
       row("Banka", ngo.bank) +
