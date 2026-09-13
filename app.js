@@ -91,6 +91,9 @@
       setText("photoCap", c.runner + " · " + c.race + " · " + c.venue);
     } else img.hidden = true;
 
+    setText("operator", c.operator);
+    var cl = document.getElementById("contactLink");
+    if (cl && c.contactEmail) { cl.href = "mailto:" + c.contactEmail; cl.textContent = c.contactEmail; }
     renderNotice(c);
     renderBank(c, ngo);
     renderReport(c, ngo);

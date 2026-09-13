@@ -18,7 +18,7 @@ if (c.closeISO && c.raceDateISO && new Date(c.closeISO) >= new Date(c.raceDateIS
   err("closeISO yaris gununden sonra");
 if (!(typeof c.minToAppear === "number" && c.minToAppear > 0)) err("campaign.minToAppear pozitif sayi olmali");
 if (c.photo && !fs.existsSync("assets/" + c.photo)) err(`campaign.photo dosyasi yok: assets/${c.photo}`);
-["runner", "contactEmail"].forEach((k) => { if (!c[k]) warn(`campaign.${k} hala bos`); });
+["runner", "contactEmail", "operator"].forEach((k) => { if (!c[k]) warn(`campaign.${k} hala bos`); });
 if (!c.donationsOpen) warn("donationsOpen false — IBAN ve bildirim baglantisi sitede gizli");
 
 const ngo = c.ngo || {};
