@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bağış Koşusu — vücut bölgeleri bağışa açık</title>
+<meta name="description" content="Bir koşucunun vücut bölgeleri, bağış karşılığında marka alanı. Para bize uğramaz, doğrudan derneğe gider.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-in">
+    <div class="brand">BAĞIŞ&nbsp;KOŞUSU</div>
+    <div class="counters">
+      <div class="counter"><span class="k" id="total">—</span><span class="l">toplanan bağış</span></div>
+      <div class="counter"><span class="k" id="countdown">—</span><span class="l">bağış kapanışına</span></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero wrap">
+    <h1>Vücudundaki her bölge, bir derneğe yapılmış bağış.</h1>
+    <p class="lede" id="lede">
+      <strong id="runner">Koşucumuz</strong>, <strong id="race">HYROX İzmir</strong>'de koşuyor.
+      Bir bölgeyi en çok bağışlayan markanın logosu yarış günü onun üstünde olacak.
+      <em>Para bize uğramıyor</em> — bağışı doğrudan derneğe yapıyorsun, biz yalnızca makbuzu doğruluyoruz.
+    </p>
+  </section>
+
+  <section class="wrap body-sec">
+    <div class="viewtabs" role="tablist">
+      <button class="vt is-on" data-view="front" role="tab">Ön</button>
+      <button class="vt" data-view="back" role="tab">Arka</button>
+    </div>
+
+    <div class="stage">
+      <div class="figure" id="figure">
+        <img id="runnerImg" src="assets/runner-front.svg" alt="Koşucu, ön görünüm">
+        <div id="hotspots"></div>
+      </div>
+
+      <aside class="panel" id="panel">
+        <p class="panel-empty">Bir bölgeye dokun.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <h2>Tişört</h2>
+    <p class="sub">Bağış yapan herkesin adı, koşucunun yarışta giyeceği tişörtte. Punto bağış tutarına göre.</p>
+    <div class="shirt" id="shirt"></div>
+    <p class="warn" id="shirtWarn" hidden></p>
+  </section>
+
+  <section class="wrap">
+    <h2>Taht listesi</h2>
+    <div id="thrones" class="thrones"></div>
+  </section>
+
+  <section class="wrap">
+    <h2>Destekçiler</h2>
+    <div id="supporters" class="supporters"></div>
+  </section>
+
+  <section class="wrap rules">
+    <h2>Kurallar</h2>
+    <ol>
+      <li>Bir bölgenin sahibi, o bölgeye <strong>en çok bağışlamış</strong> markadır. Bağışlar birikir: geçilirsen paran durur, üstüne ekleyip tahtı geri alırsın.</li>
+      <li>Eşitlikte önce ulaşan oturur.</li>
+      <li>Taban tutarın altındaki bağış bölgeyi almaz; destekçiler listesine ve tişörte yazılır. <strong>Hiçbir bağışın iadesi yoktur</strong> — bağış doğrudan derneğe yapılır, bizim elimizde para durmaz.</li>
+      <li><strong>Kapanış: 16 Eylül 2026 Çarşamba 23.59.</strong> Bölgeler de tişört listesi de o an donar. Sonra gelen bağış siteye yazılır, baskıya yetişmez.</li>
+      <li>Bir marka birden çok bölge alabilir.</li>
+      <li>İsim/marka metni en fazla 24 karakter; bir bağış bir isim.</li>
+      <li><strong>Yasaklı sektörler:</strong> bahis ve kumar, tütün, alkol, yetişkin içerik, kripto pump, siyasi içerik, ayrıca HYROX'un resmi sponsorlarıyla çakışan markalar.</li>
+      <li>Uygun görülmeyen logo veya metin reddedilir. Bağış derneğe kalır, katkı "isimsiz destekçi" olarak listelenir, baskıya girmez.</li>
+      <li>Sponsor listesini dernek onaylar.</li>
+    </ol>
+  </section>
+
+  <section class="wrap how">
+    <h2>Nasıl katılınır</h2>
+    <ol>
+      <li>Bölgeyi seç, taban tutarı ve tepedeki tutarı gör.</li>
+      <li><strong id="ngoName">Derneğin</strong> kendi bağış sayfasından bağışını yap; açıklamaya <code id="code">kampanya kodu</code> ve marka adını yaz.</li>
+      <li>Formu doldur: marka, bölge, tutar, makbuz, logo, site adresi.</li>
+      <li>Makbuz doğrulanınca logon yayına girer.</li>
+    </ol>
+    <a class="cta" id="formLink" href="#">Bağışımı bildir</a>
+  </section>
+</main>
+
+<footer class="wrap">
+  <p>Bu bir sosyal sorumluluk projesidir. Site hiçbir ödeme almaz, hiçbir komisyon kesmez. Bağışlar doğrudan <strong id="ngoFoot">derneğe</strong> yapılır.</p>
+</footer>
+
+<script src="tshirt-layout.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "campaign": {
+    "runner": "",
+    "race": "HYROX İzmir",
+    "venue": "Fuar İzmir, Gaziemir",
+    "raceDateISO": "2026-09-19",
+    "closeISO": "2026-09-16T23:59:59+03:00",
+    "ngo": { "name": "", "donateUrl": "", "campaignCode": "", "note": "" },
+    "formUrl": ""
+  },
+  "regions": [
+    { "id": "gogus",      "label": "Göğüs",        "floor": 15000, "view": "front", "hotspot": { "x": 50, "y": 30, "w": 20, "h": 11 }, "sponsors": [] },
+    { "id": "sol-kol",    "label": "Sol Pazu",     "floor": 6000,  "view": "front", "hotspot": { "x": 30, "y": 33, "w": 12, "h": 10 }, "sponsors": [] },
+    { "id": "sag-kol",    "label": "Sağ Pazu",     "floor": 6000,  "view": "front", "hotspot": { "x": 70, "y": 33, "w": 12, "h": 10 }, "sponsors": [] },
+    { "id": "karin",      "label": "Karın",        "floor": 9000,  "view": "front", "hotspot": { "x": 50, "y": 45, "w": 18, "h": 10 }, "sponsors": [] },
+    { "id": "sol-uyluk",  "label": "Sol Uyluk",    "floor": 5000,  "view": "front", "hotspot": { "x": 42, "y": 66, "w": 13, "h": 11 }, "sponsors": [] },
+    { "id": "sag-uyluk",  "label": "Sağ Uyluk",    "floor": 5000,  "view": "front", "hotspot": { "x": 58, "y": 66, "w": 13, "h": 11 }, "sponsors": [] },
+    { "id": "sirt",       "label": "Sırt",         "floor": 12000, "view": "back",  "hotspot": { "x": 50, "y": 33, "w": 22, "h": 13 }, "sponsors": [] },
+    { "id": "sol-arka-kol","label": "Sol Arka Kol","floor": 5000,  "view": "back",  "hotspot": { "x": 30, "y": 34, "w": 12, "h": 10 }, "sponsors": [] },
+    { "id": "sag-arka-kol","label": "Sağ Arka Kol","floor": 5000,  "view": "back",  "hotspot": { "x": 70, "y": 34, "w": 12, "h": 10 }, "sponsors": [] },
+    { "id": "sol-baldir", "label": "Sol Baldır",   "floor": 4000,  "view": "back",  "hotspot": { "x": 43, "y": 80, "w": 12, "h": 10 }, "sponsors": [] },
+    { "id": "sag-baldir", "label": "Sağ Baldır",   "floor": 4000,  "view": "back",  "hotspot": { "x": 57, "y": 80, "w": 12, "h": 10 }, "sponsors": [] }
+  ]
+}
