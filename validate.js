@@ -19,9 +19,13 @@ const c = regionsDoc.campaign || {};
 });
 if (new Date(c.closeISO) >= new Date(c.raceDateISO + "T23:59:59+03:00"))
   err("closeISO yaris gununden sonra");
-["runner", "formUrl"].forEach((k) => { if (!c[k]) warn(`campaign.${k} hala bos`); });
-if (!c.ngo || !c.ngo.name) warn("campaign.ngo.name hala bos");
-if (!c.ngo || !c.ngo.donateUrl) warn("campaign.ngo.donateUrl hala bos");
+["runner", "contactEmail"].forEach((k) => { if (!c[k]) warn(`campaign.${k} hala bos`); });
+const ngo = c.ngo || {};
+["name", "iban", "campaignCode"].forEach((k) => { if (!ngo[k]) err(`campaign.ngo.${k} bos`); });
+if (ngo.iban) {
+  const flat = ngo.iban.replace(/\s/g, "");
+  if (!/^TR\d{24}$/.test(flat)) err(`campaign.ngo.iban gecersiz TR IBAN: ${ngo.iban}`);
+}
 
 const views = c.views || {};
 ["front", "back"].forEach((v) => {

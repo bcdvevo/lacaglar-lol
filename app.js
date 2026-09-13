@@ -128,13 +128,54 @@
 
   function renderCampaign() {
     var c = state.campaign;
+    var ngo = c.ngo || {};
     setText("total", money.format(totalRaised()));
     if (c.runner) setText("runner", c.runner);
     if (c.race) setText("race", c.race);
-    if (c.ngo && c.ngo.name) { setText("ngoName", c.ngo.name); setText("ngoFoot", c.ngo.name); }
-    if (c.ngo && c.ngo.campaignCode) setText("code", c.ngo.campaignCode);
-    var f = document.getElementById("formLink");
-    if (c.formUrl) f.href = c.formUrl;
+    if (ngo.name) setText("ngoFoot", ngo.name);
+    if (ngo.campaignCode) setText("code", ngo.campaignCode);
+    renderBank(ngo);
+    renderReportLink(c, ngo);
+  }
+
+  function renderBank(ngo) {
+    var el = document.getElementById("bank");
+    if (!el || !ngo.iban) { if (el) el.hidden = true; return; }
+    el.innerHTML =
+      "<dl>" +
+      row("Hesap adı", ngo.fullName || ngo.name) +
+      row("Banka", ngo.bank) +
+      '<dt>IBAN</dt><dd class="iban">' + esc(ngo.iban) + "</dd>" +
+      row("Açıklamaya yaz", ngo.campaignCode + " / marka adınız") +
+      "</dl>" +
+      '<p class="note">' + esc(ngo.note || "") +
+      (ngo.donateUrl ? ' <a href="' + esc(ngo.donateUrl) + '" target="_blank" rel="noopener">' +
+        esc(ngo.name) + " bağış sayfası</a>" : "") + "</p>";
+  }
+  function row(k, v) { return v ? "<dt>" + esc(k) + "</dt><dd>" + esc(v) + "</dd>" : ""; }
+
+  /* Bildirim e-postası: form servisi yok, mailto yeterli. Konu ve gövde önden
+     doldurulur ki eksik bilgiyle gelen bildirim sayısı düşsün. */
+  function renderReportLink(c, ngo) {
+    var a = document.getElementById("formLink");
+    var hint = document.getElementById("formHint");
+    if (!c.contactEmail) { a.hidden = true; if (hint) hint.hidden = false; return; }
+    var body = [
+      "Marka adı:",
+      "Bölge:",
+      "Bağış tutarı:",
+      "Havale tarihi:",
+      "Site adresi:",
+      "Tişörte yazılacak isim (en fazla 24 karakter):",
+      "",
+      "Ekler: dekont + logo (SVG tercih, yoksa saydam PNG)",
+      "",
+      "Kuralları okudum: bağış doğrudan " + (ngo.name || "") + " hesabına yapıldı,",
+      "iadesi yok, tahttan düşersem bağışım listede kalır."
+    ].join("\n");
+    a.href = "mailto:" + c.contactEmail +
+      "?subject=" + encodeURIComponent("Bağış bildirimi - " + (ngo.campaignCode || "")) +
+      "&body=" + encodeURIComponent(body);
   }
 
   function setText(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; }
