@@ -1,6 +1,6 @@
 {
   "campaign": {
-    "runner": "",
+    "runner": "Lütfullah Çağlar",
     "race": "HYROX İzmir",
     "venue": "Fuar İzmir, Gaziemir",
     "raceDateISO": "2026-09-19",
@@ -14,14 +14,14 @@
     "formUrl": "",
     "views": {
       "front": "runner-front.jpg",
-      "back": null
+      "back": "runner-back.svg"
     }
   },
   "regions": [
     {
       "id": "gogus",
       "label": "Göğüs",
-      "floor": 15000,
+      "floor": 10000,
       "view": "front",
       "hotspot": {
         "x": 53,
@@ -32,9 +32,22 @@
       "sponsors": []
     },
     {
+      "id": "karin",
+      "label": "Karın",
+      "floor": 6000,
+      "view": "front",
+      "hotspot": {
+        "x": 54,
+        "y": 35,
+        "w": 24,
+        "h": 9
+      },
+      "sponsors": []
+    },
+    {
       "id": "sag-pazu",
       "label": "Sağ Pazu",
-      "floor": 6000,
+      "floor": 4000,
       "view": "front",
       "hotspot": {
         "x": 29,
@@ -47,7 +60,7 @@
     {
       "id": "sol-pazu",
       "label": "Sol Pazu",
-      "floor": 6000,
+      "floor": 4000,
       "view": "front",
       "hotspot": {
         "x": 81,
@@ -58,22 +71,9 @@
       "sponsors": []
     },
     {
-      "id": "karin",
-      "label": "Karın",
-      "floor": 9000,
-      "view": "front",
-      "hotspot": {
-        "x": 54,
-        "y": 35,
-        "w": 24,
-        "h": 9
-      },
-      "sponsors": []
-    },
-    {
       "id": "sag-uyluk",
       "label": "Sağ Uyluk",
-      "floor": 5000,
+      "floor": 3500,
       "view": "front",
       "hotspot": {
         "x": 49,
@@ -86,7 +86,7 @@
     {
       "id": "sol-uyluk",
       "label": "Sol Uyluk",
-      "floor": 5000,
+      "floor": 3500,
       "view": "front",
       "hotspot": {
         "x": 75,
@@ -97,28 +97,54 @@
       "sponsors": []
     },
     {
-      "id": "sag-baldir",
-      "label": "Sağ Baldır",
-      "floor": 4000,
-      "view": "front",
+      "id": "sirt",
+      "label": "Sırt",
+      "floor": 8000,
+      "view": "back",
       "hotspot": {
-        "x": 55,
-        "y": 76,
-        "w": 12,
+        "x": 50,
+        "y": 28,
+        "w": 30,
+        "h": 12
+      },
+      "sponsors": []
+    },
+    {
+      "id": "kalca",
+      "label": "Kalça",
+      "floor": 7500,
+      "view": "back",
+      "hotspot": {
+        "x": 50,
+        "y": 48,
+        "w": 24,
         "h": 7
       },
       "sponsors": []
     },
     {
-      "id": "sol-baldir",
-      "label": "Sol Baldır",
-      "floor": 4000,
-      "view": "front",
+      "id": "sag-arka-kol",
+      "label": "Sağ Arka Kol",
+      "floor": 3500,
+      "view": "back",
       "hotspot": {
-        "x": 80,
-        "y": 73,
-        "w": 12,
-        "h": 7
+        "x": 74,
+        "y": 27,
+        "w": 11,
+        "h": 9
+      },
+      "sponsors": []
+    },
+    {
+      "id": "sol-arka-kol",
+      "label": "Sol Arka Kol",
+      "floor": 3500,
+      "view": "back",
+      "hotspot": {
+        "x": 26,
+        "y": 27,
+        "w": 11,
+        "h": 9
       },
       "sponsors": []
     }
