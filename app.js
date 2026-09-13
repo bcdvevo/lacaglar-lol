@@ -145,17 +145,37 @@
   }
 
   /* --- görünüm sekmeleri --- */
-  document.querySelectorAll(".vt").forEach(function (b) {
-    b.addEventListener("click", function () {
-      document.querySelectorAll(".vt").forEach(function (x) { x.classList.remove("is-on"); });
-      b.classList.add("is-on");
-      state.view = b.dataset.view;
-      state.selected = null;
-      document.getElementById("runnerImg").src = "assets/runner-" + state.view + ".svg";
-      document.getElementById("runnerImg").alt = "Koşucu, " + (state.view === "front" ? "ön" : "arka") + " görünüm";
-      renderHotspots(); renderPanel();
+  function photoFor(view) {
+    var v = (state.campaign && state.campaign.views) || {};
+    return v[view] ? "assets/" + v[view] : null;
+  }
+
+  function applyView(view) {
+    state.view = view;
+    state.selected = null;
+    var img = document.getElementById("runnerImg");
+    var src = photoFor(view);
+    img.src = src || "assets/runner-" + view + ".svg";
+    img.alt = "Koşucu, " + (view === "front" ? "ön" : "arka") + " görünüm";
+    renderHotspots(); renderPanel();
+  }
+
+  function setupTabs() {
+    var tabs = document.querySelectorAll(".vt");
+    var shown = 0;
+    tabs.forEach(function (b) {
+      // fotoğrafı olmayan görünümün sekmesi hiç çizilmez; boş siluet gerçek
+      // fotoğrafın yanında bozuk durur
+      if (!photoFor(b.dataset.view)) { b.remove(); return; }
+      shown++;
+      b.addEventListener("click", function () {
+        document.querySelectorAll(".vt").forEach(function (x) { x.classList.remove("is-on"); });
+        b.classList.add("is-on");
+        applyView(b.dataset.view);
+      });
     });
-  });
+    if (shown < 2) document.querySelector(".viewtabs").hidden = true;
+  }
 
   /* --- açılış --- */
   Promise.all([
@@ -165,7 +185,7 @@
     state.campaign = res[0].campaign;
     state.regions = res[0].regions;
     state.donors = res[1].donors || [];
-    renderCampaign(); renderHotspots(); renderPanel();
+    renderCampaign(); setupTabs(); applyView(photoFor("front") ? "front" : "back");
     renderShirt(); renderThrones(); renderSupporters();
     tickCountdown(); setInterval(tickCountdown, 1000);
   }).catch(function (e) {

@@ -35,9 +35,12 @@ section:first-of-type{border-top:0}
 .vt.is-on{background:var(--ink);color:#0d0d0f}
 
 .stage{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:28px;align-items:start}
-.figure{position:relative;background:var(--card);border:1px solid var(--line);
-  border-radius:var(--radius);overflow:hidden}
-.figure img{display:block;width:100%;height:auto}
+.figure{background:var(--card);border:1px solid var(--line);
+  border-radius:var(--radius);overflow:hidden;display:grid;place-items:center;padding:8px}
+/* hotspot yuzdeleri goruntu kutusuna gore olculuyor; sarmalayici goruntuye
+   birebir oturmali, yoksa koordinatlar kayar */
+.figwrap{position:relative;display:inline-block;line-height:0}
+.figwrap img{display:block;height:clamp(520px,64vh,780px);width:auto;max-width:100%;border-radius:8px}
 .hs{position:absolute;transform:translate(-50%,-50%);border:1.5px dashed rgba(255,255,255,.34);
   border-radius:10px;background:rgba(255,255,255,.04);cursor:pointer;padding:0;
   display:grid;place-items:center;transition:border-color .15s,background .15s}
@@ -84,6 +87,7 @@ footer{padding-block:34px;border-top:1px solid var(--line);color:var(--dim);font
 
 @media (max-width:860px){
   .stage{grid-template-columns:1fr}
+  .figwrap img{height:clamp(420px,58vh,600px)}
   .panel{position:static}
   .counters{gap:18px}
 }

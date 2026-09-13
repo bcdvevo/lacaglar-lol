@@ -23,6 +23,15 @@ if (new Date(c.closeISO) >= new Date(c.raceDateISO + "T23:59:59+03:00"))
 if (!c.ngo || !c.ngo.name) warn("campaign.ngo.name hala bos");
 if (!c.ngo || !c.ngo.donateUrl) warn("campaign.ngo.donateUrl hala bos");
 
+const views = c.views || {};
+["front", "back"].forEach((v) => {
+  const used = (regionsDoc.regions || []).some((r) => r.view === v);
+  if (used && !views[v]) err(`${v} gorunumunde bolge var ama campaign.views.${v} bos`);
+  if (views[v] && !fs.existsSync(path.join("assets", views[v])))
+    err(`campaign.views.${v}: dosya yok — assets/${views[v]}`);
+  if (!views[v]) warn(`${v} fotografi yok — o gorunum sitede cikmaz`);
+});
+
 const ids = new Set();
 const byView = { front: [], back: [] };
 
