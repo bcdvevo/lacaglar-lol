@@ -1,175 +1,132 @@
-/* Tek sayfa. Veri data/*.json'dan gelir, türetilen hiçbir şey dosyada tutulmaz. */
+/* Tek sayfa. Veri data/*.json'dan gelir; toplam, sıralama ve punto hesaplanır. */
 (function () {
   "use strict";
 
   var TL = window.TshirtLayout;
-  var state = { campaign: null, regions: [], donors: [], view: "front", selected: null };
-
+  var state = { c: null, donors: [] };
   var money = new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY", maximumFractionDigits: 0 });
+  var num = new Intl.NumberFormat("tr-TR");
 
-  /* --- türetilen değerler: hiçbiri JSON'a yazılmaz --- */
-  function holderOf(region) {
-    var eligible = region.sponsors.filter(function (s) { return s.total >= region.floor; });
-    if (!eligible.length) return null;
-    return eligible.slice().sort(function (a, b) {
-      if (b.total !== a.total) return b.total - a.total;
-      return String(a.lastAt).localeCompare(String(b.lastAt)); // eşitlikte önce ulaşan
-    })[0];
-  }
   function totalRaised() {
     return state.donors.reduce(function (n, d) { return n + d.total; }, 0);
   }
+  function onShirt() {
+    return state.donors.filter(function (d) { return d.onShirt !== false; });
+  }
+  function sorted() {
+    return state.donors.slice().sort(function (a, b) {
+      if (b.total !== a.total) return b.total - a.total;
+      return String(a.verifiedAt).localeCompare(String(b.verifiedAt)); // eşitlikte önce ulaşan
+    });
+  }
 
   /* --- geri sayım --- */
-  function tickCountdown() {
+  function tick() {
     var el = document.getElementById("countdown");
-    var end = new Date(state.campaign.closeISO).getTime();
-    var ms = end - Date.now();
+    var ms = new Date(state.c.closeISO).getTime() - Date.now();
     if (ms <= 0) { el.textContent = "KAPANDI"; return; }
     var s = Math.floor(ms / 1000);
-    var d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600),
-        m = Math.floor((s % 3600) / 60), sec = s % 60;
-    el.textContent = d + "g " + pad(h) + ":" + pad(m) + ":" + pad(sec);
+    el.textContent = Math.floor(s / 86400) + "g " + pad((s % 86400) / 3600 | 0) + ":" +
+                     pad((s % 3600) / 60 | 0) + ":" + pad(s % 60);
   }
   function pad(n) { return String(n).padStart(2, "0"); }
 
-  /* --- vücut haritası --- */
-  function renderHotspots() {
-    var box = document.getElementById("hotspots");
-    box.innerHTML = "";
-    state.regions.filter(function (r) { return r.view === state.view; }).forEach(function (r) {
-      var h = r.hotspot, holder = holderOf(r);
-      var b = document.createElement("button");
-      b.className = "hs" + (holder ? " taken" : "") + (state.selected === r.id ? " is-sel" : "");
-      b.style.left = h.x + "%"; b.style.top = h.y + "%";
-      b.style.width = h.w + "%"; b.style.height = h.h + "%";
-      b.setAttribute("aria-label", r.label);
-      if (holder && holder.logo) {
-        var img = document.createElement("img");
-        img.src = "logos/" + holder.logo; img.alt = holder.brand;
-        b.appendChild(img);
-      } else {
-        var t = document.createElement("span");
-        t.className = "tag"; t.textContent = r.label;
-        b.appendChild(t);
-      }
-      b.addEventListener("click", function () { select(r.id); });
-      box.appendChild(b);
-    });
-  }
-
-  function select(id) {
-    state.selected = id;
-    renderHotspots();
-    renderPanel();
-  }
-
-  function renderPanel() {
-    var el = document.getElementById("panel");
-    var r = state.regions.find(function (x) { return x.id === state.selected; });
-    if (!r) { el.innerHTML = '<p class="panel-empty">Bir bölgeye dokun.</p>'; return; }
-    var holder = holderOf(r);
-    var need = holder ? holder.total + 1 : r.floor;
-
-    var html = "<h3>" + esc(r.label) + "</h3>";
-    html += '<p class="floor">Taban tutar ' + money.format(r.floor) + "</p>";
-    html += '<div class="holder">';
-    if (holder) {
-      html += '<div class="who">' + esc(holder.brand) + "</div>";
-      html += '<div class="amt">' + money.format(holder.total) + "</div>";
-    } else {
-      html += '<div class="none">Bu bölge henüz sahipsiz.</div>';
-    }
-    html += "</div>";
-    html += '<p class="need">Tahtı almak için toplam bağışın <b>' + money.format(need) +
-            "</b> üstüne çıkmalı. Daha önce bağışladıysan üstüne eklemen yeterli.</p>";
-    html += '<a class="cta" href="' + esc(state.campaign.formUrl || "#") + '">Bu bölge için bağış bildir</a>';
-    el.innerHTML = html;
-  }
-
-  /* --- tişört --- */
-  function renderShirt() {
-    var el = document.getElementById("shirt");
+  /* --- tişört: ön ve arka aynı baskı, tek dizgiden --- */
+  function renderTees() {
+    var list = onShirt();
+    var front = document.getElementById("teeFront");
+    var back = document.getElementById("teeBack");
     var warn = document.getElementById("shirtWarn");
-    if (!state.donors.length) { el.innerHTML = '<span class="empty">İlk isim seni bekliyor.</span>'; return; }
-    var res = TL.layout(state.donors.filter(function (d) { return d.onShirt !== false; }), { maxWidth: 620, maxHeight: 700 });
-    el.innerHTML = TL.toSvg(res, { fill: "#111" });
+
+    if (!list.length) {
+      var empty = '<p class="teeempty">İlk isim seni bekliyor.</p>';
+      front.innerHTML = empty; back.innerHTML = empty; warn.hidden = true;
+      return;
+    }
+    var res = TL.layout(list, Object.assign({ minAmount: state.c.minToAppear }, state.c.print));
+    var svg = TL.toTeeSvg(res, { fill: "#111" });
+    front.innerHTML = svg;
+    back.innerHTML = svg; // aynı tasarım, iki yüz
     if (res.overflow.length) {
       warn.hidden = false;
       warn.textContent = "Tişört kapasitesi doldu: " + res.overflow.length +
-        " isim baskıya giremiyor. Kurallar gereği en alt kademe kesilir.";
-    } else { warn.hidden = true; }
+        " isim baskıya giremiyor. Kurallar gereği en küçük puntolular kesilir.";
+    } else warn.hidden = true;
   }
 
-  /* --- listeler --- */
-  function renderThrones() {
-    var el = document.getElementById("thrones");
-    var rows = [];
-    state.regions.forEach(function (r) {
-      r.sponsors.forEach(function (s) { rows.push({ region: r.label, s: s }); });
-    });
-    rows.sort(function (a, b) { return b.s.total - a.s.total; });
-    if (!rows.length) { el.innerHTML = '<p class="empty">Henüz bölge sahibi yok.</p>'; return; }
-    el.innerHTML = rows.map(function (x) {
-      return '<div class="row"><div><div class="rname">' + esc(x.s.brand) +
-        '</div><div class="rregion">' + esc(x.region) + '</div></div>' +
-        '<div class="ramt">' + money.format(x.s.total) + "</div></div>";
+  /* --- bağışçı listesi --- */
+  function renderDonors() {
+    var el = document.getElementById("donors");
+    var sub = document.getElementById("donorSub");
+    var list = sorted();
+    if (!list.length) {
+      el.innerHTML = '<li class="empty">Henüz bağışçı yok.</li>';
+      sub.textContent = "";
+      return;
+    }
+    sub.textContent = list.length + " bağışçı, toplam " + money.format(totalRaised()) + ".";
+    el.innerHTML = list.map(function (d, i) {
+      var cls = i < 3 ? " top" : "";
+      return '<li class="drow' + cls + '"><span class="rank">' + (i + 1) + "</span>" +
+        '<span class="dname">' + esc(d.name) + "</span>" +
+        '<span class="damt">' + money.format(d.total) + "</span></li>";
     }).join("");
   }
 
-  function renderSupporters() {
-    var el = document.getElementById("supporters");
-    var list = state.donors.slice().sort(function (a, b) { return b.total - a.total; });
-    if (!list.length) { el.innerHTML = '<p class="empty">Henüz destekçi yok.</p>'; return; }
-    el.innerHTML = list.map(function (d) {
-      return '<span class="chip">' + esc(d.name) + " · " + money.format(d.total) + "</span>";
-    }).join("");
-  }
-
+  /* --- kampanya --- */
   function renderCampaign() {
-    var c = state.campaign;
-    var ngo = c.ngo || {};
+    var c = state.c, ngo = c.ngo || {};
     setText("total", money.format(totalRaised()));
-    if (c.runner) setText("runner", c.runner);
-    if (c.race) setText("race", c.race);
-    if (ngo.name) setText("ngoFoot", ngo.name);
-    if (ngo.campaignCode) setText("code", ngo.campaignCode);
+    setText("donorCount", num.format(state.donors.length));
+    setText("runner", c.runner);
+    setText("race", c.race);
+    setText("ngoLede", ngo.name);
+    setText("ngoFoot", ngo.name);
+    setText("minAmount", money.format(c.minToAppear));
+
+    var img = document.getElementById("runnerImg");
+    if (c.photo) {
+      img.src = "assets/" + c.photo;
+      img.alt = c.runner + ", " + c.race;
+      setText("photoCap", c.runner + " · " + c.race + " · " + c.venue);
+    } else img.hidden = true;
+
     renderNotice(c);
-    renderBank(ngo, c);
-    renderReportLink(c, ngo);
+    renderBank(c, ngo);
+    renderReport(c, ngo);
   }
 
-  /* Yumuşak açılış: dernek onayı gelene kadar hesap bilgileri ve bildirim
-     bağlantısı gizli. campaign.donationsOpen true yapıldığında ikisi de açılır. */
+  /* Yumuşak açılış: LÖSEV onayı gelene kadar hesap bilgileri ve bildirim
+     bağlantısı gizli. campaign.json'da donationsOpen true yapılınca ikisi açılır. */
   function renderNotice(c) {
     var el = document.getElementById("notice");
-    if (!el || c.donationsOpen) { if (el) el.hidden = true; return; }
+    if (c.donationsOpen) { el.hidden = true; return; }
     el.hidden = false;
     el.innerHTML = "<b>Bağış kabulü " + esc(c.opensAtText || "yakında") + " açılıyor.</b> " +
-      "Bölgeleri, kuralları ve tişörtü şimdi inceleyebilirsin. " +
-      "Hesap bilgileri açılışta yayınlanacak.";
+      "Kuralları ve tişörtü şimdi inceleyebilirsin; hesap bilgileri açılışta yayınlanacak.";
   }
 
-  function renderBank(ngo, c) {
+  function renderBank(c, ngo) {
     var el = document.getElementById("bank");
-    if (!el) return;
     var step = document.getElementById("stepPay");
-    if (!ngo.iban || !c.donationsOpen) {
+    var code = ngo.campaignCode || "";
+
+    if (!c.donationsOpen || !ngo.iban) {
       el.hidden = true;
-      // hesap karti gizliyken "asagidaki hesaba" diyen adim bosluga isaret ediyor
-      if (step) step.innerHTML = "LÖSEV hesabına <strong>havale veya EFT</strong> yap. " +
-        "Hesap bilgileri ve açıklamaya yazılacak kampanya kodu, bağış kabulü açıldığında " +
-        "burada yayınlanacak. Kredi kartıyla online bağışta açıklama alanı olmadığı için " +
-        "hangi bağışın kime ait olduğunu ayırt edemiyoruz; bu yüzden yalnızca havale kabul ediyoruz.";
+      step.innerHTML = "<strong>" + esc(ngo.name || "Derneğin") + "</strong> hesabına havale veya EFT yap. " +
+        "Hesap bilgileri bağış kabulü açıldığında burada yayınlanacak.";
       return;
     }
     el.hidden = false;
-    el.innerHTML =
-      "<dl>" +
+    step.innerHTML = "Aşağıdaki hesaba <strong>havale veya EFT</strong> yap. Açıklamaya " +
+      "<code>" + esc(code) + "</code> ve tişörte yazılmasını istediğin ismi yaz. " +
+      "Kredi kartıyla online bağışta açıklama alanı olmadığı için hangi bağışın kime ait " +
+      "olduğunu ayırt edemiyoruz; bu yüzden yalnızca havale kabul ediyoruz.";
+    el.innerHTML = "<dl>" +
       row("Hesap adı", ngo.fullName || ngo.name) +
       row("Banka", ngo.bank) +
       '<dt>IBAN</dt><dd class="iban">' + esc(ngo.iban) + "</dd>" +
-      row("Açıklamaya yaz", ngo.campaignCode + " / marka adınız") +
+      row("Açıklamaya yaz", code + " / tişörte yazılacak isim") +
       "</dl>" +
       '<p class="note">' + esc(ngo.note || "") +
       (ngo.donateUrl ? ' <a href="' + esc(ngo.donateUrl) + '" target="_blank" rel="noopener">' +
@@ -177,93 +134,47 @@
   }
   function row(k, v) { return v ? "<dt>" + esc(k) + "</dt><dd>" + esc(v) + "</dd>" : ""; }
 
-  /* Bildirim e-postası: form servisi yok, mailto yeterli. Konu ve gövde önden
-     doldurulur ki eksik bilgiyle gelen bildirim sayısı düşsün. */
-  function renderReportLink(c, ngo) {
-    var a = document.getElementById("formLink");
-    var hint = document.getElementById("formHint");
-    if (!c.contactEmail || !c.donationsOpen) {
-      a.hidden = true;
-      if (hint) {
-        hint.hidden = false;
-        hint.textContent = c.donationsOpen
-          ? "İletişim adresi henüz eklenmedi."
-          : "Bağış kabulü açıldığında bildirim bağlantısı burada olacak.";
-      }
+  /* Form servisi yerine ön doldurulmuş e-posta: yirmi bildirim için yeterli. */
+  function renderReport(c, ngo) {
+    var a = document.getElementById("reportLink");
+    var hint = document.getElementById("reportHint");
+    if (!c.donationsOpen || !c.contactEmail) {
+      a.hidden = true; hint.hidden = false;
+      hint.textContent = "Bağış kabulü açıldığında bildirim bağlantısı burada olacak.";
       return;
     }
-    if (hint) hint.hidden = true;
-    a.hidden = false;
+    hint.hidden = true; a.hidden = false;
     var body = [
-      "Marka adı:",
-      "Bölge:",
+      "Tişörte yazılacak isim (en fazla 24 karakter):",
       "Bağış tutarı:",
       "Havale tarihi:",
-      "Site adresi:",
-      "Tişörte yazılacak isim (en fazla 24 karakter):",
       "",
-      "Ekler: dekont + logo (SVG tercih, yoksa saydam PNG)",
+      "Ek: dekont",
       "",
-      "Kuralları okudum: bağış doğrudan " + (ngo.name || "") + " hesabına yapıldı,",
-      "iadesi yok, tahttan düşersem bağışım listede kalır."
+      "Kuralları okudum: bağış doğrudan " + (ngo.name || "") + " hesabına yapıldı, iadesi yok."
     ].join("\n");
     a.href = "mailto:" + c.contactEmail +
       "?subject=" + encodeURIComponent("Bağış bildirimi - " + (ngo.campaignCode || "")) +
       "&body=" + encodeURIComponent(body);
   }
 
-  function setText(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; }
+  function setText(id, v) { var e = document.getElementById(id); if (e && v) e.textContent = v; }
   function esc(s) {
-    return String(s == null ? "" : s).replace(/[<>&"']/g, function (c) {
-      return { "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;", "'": "&apos;" }[c];
+    return String(s == null ? "" : s).replace(/[<>&"']/g, function (ch) {
+      return { "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;", "'": "&apos;" }[ch];
     });
   }
 
-  /* --- görünüm sekmeleri --- */
-  function photoFor(view) {
-    var v = (state.campaign && state.campaign.views) || {};
-    return v[view] ? "assets/" + v[view] : null;
-  }
-
-  function applyView(view) {
-    state.view = view;
-    state.selected = null;
-    var img = document.getElementById("runnerImg");
-    var src = photoFor(view);
-    img.src = src || "assets/runner-" + view + ".svg";
-    img.alt = "Koşucu, " + (view === "front" ? "ön" : "arka") + " görünüm";
-    renderHotspots(); renderPanel();
-  }
-
-  function setupTabs() {
-    var tabs = document.querySelectorAll(".vt");
-    var shown = 0;
-    tabs.forEach(function (b) {
-      // fotoğrafı olmayan görünümün sekmesi hiç çizilmez; boş siluet gerçek
-      // fotoğrafın yanında bozuk durur
-      if (!photoFor(b.dataset.view)) { b.remove(); return; }
-      shown++;
-      b.addEventListener("click", function () {
-        document.querySelectorAll(".vt").forEach(function (x) { x.classList.remove("is-on"); });
-        b.classList.add("is-on");
-        applyView(b.dataset.view);
-      });
-    });
-    if (shown < 2) document.querySelector(".viewtabs").hidden = true;
-  }
-
-  /* --- açılış --- */
   Promise.all([
-    fetch("data/regions.json?v=" + Date.now()).then(function (r) { return r.json(); }),
+    fetch("data/campaign.json?v=" + Date.now()).then(function (r) { return r.json(); }),
     fetch("data/donors.json?v=" + Date.now()).then(function (r) { return r.json(); })
   ]).then(function (res) {
-    state.campaign = res[0].campaign;
-    state.regions = res[0].regions;
+    state.c = res[0];
     state.donors = res[1].donors || [];
-    renderCampaign(); setupTabs(); applyView(photoFor("front") ? "front" : "back");
-    renderShirt(); renderThrones(); renderSupporters();
-    tickCountdown(); setInterval(tickCountdown, 1000);
+    renderCampaign(); renderTees(); renderDonors();
+    tick(); setInterval(tick, 1000);
   }).catch(function (e) {
-    document.getElementById("panel").innerHTML = '<p class="panel-empty">Veri yüklenemedi: ' + esc(e.message) + "</p>";
+    document.getElementById("donors").innerHTML =
+      '<li class="empty">Veri yüklenemedi: ' + esc(e.message) + "</li>";
   });
 })();

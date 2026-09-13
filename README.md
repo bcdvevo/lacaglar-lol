@@ -1,74 +1,73 @@
-# kosu-bagis
+# lacaglar.lol — Bağış Koşusu
 
-Bir koşucunun vücut bölgeleri, tek bir derneğe yapılan bağış karşılığında marka alanı.
-**Site parayı hiç tutmaz** — bağış doğrudan derneğe yapılır, makbuz elle doğrulanır.
+LÖSEV'e bağış yap, adın **Lütfullah Çağlar**'ın HYROX İzmir'de (19 Eylül 2026)
+giyeceği tişörte basılsın. Punto bağış tutarına göre.
 
-Yarış: **HYROX İzmir, 19 Eylül 2026** · Bağış kapanışı: **16 Eylül 2026 23:59**
+**Site parayı hiç tutmaz.** Bağış doğrudan LÖSEV hesabına yapılır, dekont elle
+doğrulanır. Açık artırma, vücut bölgesi, komisyon yok.
 
-Tasarım: vault → `🏰 300-Projects/kosu-bagis/2026-09-13-tasarim.md`
+Bağış kapanışı: **16 Eylül 2026 23:59** · Canlı: https://lacaglar.lol
+
+Tasarım notu: vault → `🏰 300-Projects/kosu-bagis/2026-09-13-tasarim.md`
 
 ## Çalıştırma
 
-    python3 -m http.server 8000     # sonra http://localhost:8000
+    python3 -m http.server 8000     # http://localhost:8000
 
-Build adımı yok. Statik dosyalar; `fetch` ile `data/*.json` okunur.
+Build adımı yok. `fetch` ile `data/*.json` okunur.
 
 ## Bir bağışı yayına alma
 
-1. Makbuzu doğrula (tutar + açıklamada marka adı).
-2. Logoyu `logos/` altına koy (SVG tercih, yoksa saydam PNG).
-3. `data/donors.json` → ilgili markanın `total`'ını **güncelle** (yeni satır açma, birikir).
-4. Bölge alındıysa `data/regions.json` → o bölgenin `sponsors` dizisinde markanın
-   `total`'ını güncelle.
-5. `node validate.js` — hatasız olmalı.
-6. Commit + push. Site yenilenir.
+1. Dekontu doğrula: gönderen adı, tutar, açıklamadaki isim.
+2. `data/donors.json` → ilgili ismin `total`'ını **güncelle**. Yeni satır açma;
+   aynı kişi tekrar bağışladıysa toplamı artar, puntosu büyür.
+3. `node validate.js` — hatasız olmalı.
+4. Commit + push. Site yenilenir.
 
-Sahiplik, taht sırası ve toplam bağış **hesaplanır**; hiçbir dosyada yazmaz.
-Tek gerçek kaynağı `total` alanıdır.
+Toplam, sıralama ve punto **hesaplanır**, hiçbir dosyada yazmaz.
 
-## Kapanıştan sonra (17 Eyl)
+## Bağış kabulünü açma
 
-    node build-tshirt.js    # tshirt.svg — baskıya giden dosya
+`data/campaign.json` → `"donationsOpen": true`. IBAN kartı ve bildirim bağlantısı
+aynı anda görünür olur. LÖSEV onayı gelmeden açma.
 
-Sitedeki önizleme ile baskı dosyası aynı fonksiyondan (`tshirt-layout.js`) çıkar.
+## Kapanıştan sonra (17 Eylül)
+
+    node build-tshirt.js
+    # tshirt-baski.svg  -> baskıcıya giden dosya
+    # tshirt-maket.svg  -> tişört maketi (önizleme)
+
+Ön ve arka aynı tasarım: tek dosya iki kez basılır.
+
+## Punto nasıl hesaplanır
+
+En yüksek bağış en büyük puntoyu alır, diğerleri ona göre ölçeklenir
+(`(tutar / en_yüksek) ^ 0.45`). Sabit eşik kullanılmıyor; öyle olsaydı belli bir
+tutardan sonra herkes aynı boyda çıkardı.
+
+Dizgi sığmazsa **tüm puntolar orantılı küçültülür** ve yeniden denenir. Bağış
+yapmış birini baskı dışında bırakmak son çare.
+
+## Yayın
+
+GitHub Pages, `bcdvevo/lacaglar-lol`, `main` dalı. Alan adı GoDaddy'de:
+apex için dört A kaydı (185.199.108-111.153), `www` için CNAME.
+`CNAME` dosyası repoda.
 
 ## Dosyalar
 
 | Dosya | İş |
 |---|---|
 | `index.html` `style.css` `app.js` | tek sayfa |
-| `tshirt-layout.js` | isim dizgisi — tarayıcı + node ortak |
-| `data/regions.json` | kampanya + bölgeler + bölge sponsorları |
-| `data/donors.json` | tüm bağışçılar (tişört listesi) |
+| `tshirt-layout.js` | punto + dizgi — tarayıcı ve node ortak |
+| `data/campaign.json` | kampanya, dernek, baskı ayarları |
+| `data/donors.json` | bağışçılar |
 | `validate.js` | şema + tutarlılık kontrolü |
-| `build-tshirt.js` | baskı dosyası üretimi |
-| `assets/runner-*.svg` | **geçici siluet** — gerçek fotoğrafla değişecek |
+| `build-tshirt.js` | baskı dosyaları |
 
 ## Yapılacak
 
-- [ ] Koşucunun ön/arka fotoğrafı → `assets/`, hotspot koordinatları yeniden ölçülecek
-- [ ] Dernek seçimi → `campaign.ngo`
-- [ ] Bağış bildirim formu (Tally) → `campaign.formUrl`
-- [ ] Taban tutarların gözden geçirilmesi
-- [ ] HYROX Race Director yazılı izni (vücut yüzeyi bu izne bağlı)
-
-## Yayın
-
-Alan adı `lacaglar.lol`, GoDaddy'de (NS: `ns13/ns14.domaincontrol.com`).
-Statik site olduğu için GitHub Pages yeterli: build yok, sadece dosya sunumu.
-
-GoDaddy DNS'e eklenecek kayıtlar:
-
-| Tip | Ad | Değer |
-|---|---|---|
-| A | @ | 185.199.108.153 |
-| A | @ | 185.199.109.153 |
-| A | @ | 185.199.110.153 |
-| A | @ | 185.199.111.153 |
-| CNAME | www | bcdvevo.github.io |
-
-Mevcut park kayıtları (`3.33.130.190`, `15.197.148.33`) silinecek.
-`CNAME` dosyası repoda; Pages açıldıktan sonra HTTPS sertifikası otomatik gelir
-(genelde 10-30 dakika).
-
-Not: GitHub Pages ücretsiz planda **public repo** ister.
+- [ ] LÖSEV onayı → `donationsOpen: true`
+- [ ] HYROX Race Director yazılı izni (tişört için gerekmiyor, vücut baskısı için gerekli)
+- [ ] `bagis@lacaglar.lol` yönlendirmesi (ImprovMX)
+- [ ] Baskıcı (İzmir, elden teslim)

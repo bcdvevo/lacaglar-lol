@@ -3,8 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bağış Koşusu — vücut bölgeleri bağışa açık</title>
-<meta name="description" content="Bir koşucunun vücut bölgeleri, bağış karşılığında marka alanı. Para bize uğramaz, doğrudan derneğe gider.">
+<title>Bağış Koşusu — adın koşucunun üstünde</title>
+<meta name="description" content="LÖSEV'e bağış yap, adın koşucunun HYROX İzmir'de giyeceği tişörte basılsın. Punto bağış tutarına göre. Para bize uğramaz.">
+<meta property="og:title" content="Bağış Koşusu — adın koşucunun üstünde">
+<meta property="og:description" content="LÖSEV'e bağış yap, adın yarış tişörtüne basılsın. Ne kadar bağışlarsan puntun o kadar büyük.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,7 +16,8 @@
     <div class="brand">BAĞIŞ&nbsp;KOŞUSU</div>
     <div class="counters">
       <div class="counter"><span class="k" id="total">—</span><span class="l">toplanan bağış</span></div>
-      <div class="counter"><span class="k" id="countdown">—</span><span class="l">bağış kapanışına</span></div>
+      <div class="counter"><span class="k" id="donorCount">—</span><span class="l">bağışçı</span></div>
+      <div class="counter"><span class="k" id="countdown">—</span><span class="l">kapanışa</span></div>
     </div>
   </div>
 </header>
@@ -23,87 +26,71 @@
 
 <main>
   <section class="hero wrap">
-    <h1>Vücudundaki her bölge, bir derneğe yapılmış bağış.</h1>
-    <p class="lede" id="lede">
-      <strong id="runner">Koşucumuz</strong>, <strong id="race">HYROX İzmir</strong>'de koşuyor.
-      Bir bölgeyi en çok bağışlayan markanın logosu yarış günü onun üstünde olacak.
-      <em>Para bize uğramıyor</em> — bağışı doğrudan derneğe yapıyorsun, biz yalnızca makbuzu doğruluyoruz.
-    </p>
-  </section>
-
-  <section class="wrap body-sec">
-    <div class="viewtabs" role="tablist">
-      <button class="vt is-on" data-view="front" role="tab">Ön</button>
-      <button class="vt" data-view="back" role="tab">Arka</button>
+    <div class="hero-text">
+      <h1>Adın, koşucunun üstünde.</h1>
+      <p class="lede">
+        <strong id="runner">Koşucumuz</strong> <span id="race">HYROX İzmir</span>'de koşuyor.
+        <strong id="ngoLede">LÖSEV</strong>'e bağış yap, adın ya da markan yarış tişörtüne basılsın.
+        <em>Ne kadar bağışlarsan puntun o kadar büyük.</em>
+      </p>
+      <p class="lede small">
+        Para bize uğramıyor. Bağışı doğrudan LÖSEV'in hesabına yapıyorsun, biz yalnızca
+        dekontu doğrulayıp adını listeye ekliyoruz. Sıralama satın alınmıyor, bağışlanıyor.
+      </p>
     </div>
-
-    <div class="stage">
-      <div class="figure" id="figure">
-        <div class="figwrap">
-          <img id="runnerImg" src="" alt="Koşucu">
-          <div id="hotspots"></div>
-        </div>
-      </div>
-
-      <aside class="panel" id="panel">
-        <p class="panel-empty">Bir bölgeye dokun.</p>
-      </aside>
-    </div>
+    <figure class="hero-photo">
+      <img id="runnerImg" src="" alt="">
+      <figcaption id="photoCap"></figcaption>
+    </figure>
   </section>
 
   <section class="wrap">
     <h2>Tişört</h2>
-    <p class="sub">Bağış yapan herkesin adı, koşucunun yarışta giyeceği tişörtte. Punto bağış tutarına göre.</p>
-    <div class="shirt" id="shirt"></div>
+    <p class="sub">Ön ve arka aynı baskı. Liste kapanışta donar, dosya doğrudan buradan üretilir.</p>
+    <div class="tees">
+      <div class="tee"><div class="teebox" id="teeFront"></div><span class="teelabel">Ön</span></div>
+      <div class="tee"><div class="teebox" id="teeBack"></div><span class="teelabel">Arka</span></div>
+    </div>
     <p class="warn" id="shirtWarn" hidden></p>
   </section>
 
   <section class="wrap">
-    <h2>Taht listesi</h2>
-    <div id="thrones" class="thrones"></div>
+    <h2>Bağışçılar</h2>
+    <p class="sub" id="donorSub"></p>
+    <ol class="donors" id="donors"></ol>
   </section>
 
-  <section class="wrap">
-    <h2>Destekçiler</h2>
-    <div id="supporters" class="supporters"></div>
+  <section class="wrap how">
+    <h2>Nasıl bağış yapılır</h2>
+    <ol>
+      <li id="stepPay"></li>
+      <li>Dekontu ve tişörte yazılacak ismi bize gönder.</li>
+      <li>Dekont doğrulanınca adın listeye ve tişörte girer.</li>
+    </ol>
+    <div class="bank" id="bank" hidden></div>
+    <a class="cta" id="reportLink" href="#" hidden>Bağışımı bildir</a>
+    <p class="sub" id="reportHint" hidden></p>
   </section>
 
   <section class="wrap rules">
     <h2>Kurallar</h2>
     <ol>
-      <li>Bir bölgenin sahibi, o bölgeye <strong>en çok bağışlamış</strong> markadır. Bağışlar birikir: geçilirsen paran durur, üstüne ekleyip tahtı geri alırsın.</li>
-      <li>Eşitlikte önce ulaşan oturur.</li>
-      <li>Taban tutarın altındaki bağış bölgeyi almaz; destekçiler listesine ve tişörte yazılır. <strong>Hiçbir bağışın iadesi yoktur</strong> — bağış doğrudan derneğe yapılır, bizim elimizde para durmaz.</li>
-      <li><strong>Kapanış: 16 Eylül 2026 Çarşamba 23.59.</strong> Bölgeler de tişört listesi de o an donar. Sonra gelen bağış siteye yazılır, baskıya yetişmez.</li>
-      <li>Bir marka birden çok bölge alabilir.</li>
-      <li>İsim/marka metni en fazla 24 karakter; bir bağış bir isim.</li>
-      <li><strong>Yasaklı sektörler:</strong> bahis ve kumar, tütün, alkol, yetişkin içerik, kripto pump, siyasi içerik, ayrıca HYROX'un resmi sponsorlarıyla çakışan markalar.</li>
-      <li>Uygun görülmeyen logo veya metin reddedilir. Bağış derneğe kalır, katkı "isimsiz destekçi" olarak listelenir, baskıya girmez.</li>
-      <li>Sponsor listesini dernek onaylar.</li>
+      <li>Herkes istediği tutarda bağışlayabilir. Listede ve tişörtte görünmek için alt sınır <strong id="minAmount">—</strong>.</li>
+      <li>Punto bağış tutarına göre belirlenir. Bağışlar birikir: aynı isimle tekrar bağışlarsan toplamın artar, puntun büyür.</li>
+      <li><strong>Kapanış: 16 Eylül 2026 Çarşamba 23.59.</strong> Sonra gelen bağış siteye yazılır, baskıya yetişmez.</li>
+      <li>İsim ya da marka adı en fazla 24 karakter. Bir bağış bir isim.</li>
+      <li><strong>Hiçbir bağışın iadesi yoktur.</strong> Bağış doğrudan LÖSEV'e yapılır, bu sitenin elinde hiç para durmaz.</li>
+      <li>Tişört kapasitesi doluysa en küçük puntolular baskıya giremez; listede kalır.</li>
+      <li><strong>Yasaklı içerik:</strong> bahis ve kumar, tütün, alkol, yetişkin içerik, kripto pump, siyasi içerik, ayrıca HYROX'un resmi sponsorlarıyla çakışan markalar.</li>
+      <li>Uygun görülmeyen isim ya da metin reddedilir. Bağış LÖSEV'de kalır, katkı "isimsiz destekçi" olarak listelenir, baskıya girmez.</li>
+      <li>Listeyi LÖSEV onaylar.</li>
     </ol>
-  </section>
-
-  <section class="wrap how">
-    <h2>Nasıl katılınır</h2>
-    <ol>
-      <li>Bölgeyi seç. Taban tutarı ve tahttaki markanın tutarını gör.</li>
-      <li id="stepPay">Aşağıdaki hesaba <strong>havale veya EFT</strong> yap. Açıklamaya
-          <code id="code">KOSU19</code> ve marka adını yaz. Kredi kartıyla online bağışta
-          açıklama alanı olmadığı için hangi bağışın kime ait olduğunu ayırt edemiyoruz;
-          bu yüzden yalnızca havale kabul ediyoruz.</li>
-      <li>Dekontu, logonu ve site adresini bize gönder.</li>
-      <li>Dekont doğrulanınca logon yayına girer.</li>
-    </ol>
-
-    <div class="bank" id="bank"></div>
-
-    <a class="cta" id="formLink" href="#">Bağışımı bildir</a>
-    <p class="sub" id="formHint" hidden>İletişim adresi henüz eklenmedi.</p>
   </section>
 </main>
 
 <footer class="wrap">
-  <p>Bu bir sosyal sorumluluk projesidir. Site hiçbir ödeme almaz, hiçbir komisyon kesmez. Bağışlar doğrudan <strong id="ngoFoot">derneğe</strong> yapılır.</p>
+  <p>Bu bir sosyal sorumluluk projesidir. Site hiçbir ödeme almaz, hiçbir komisyon kesmez.
+     Bağışlar doğrudan <strong id="ngoFoot">LÖSEV</strong> hesabına yapılır.</p>
 </footer>
 
 <script src="tshirt-layout.js"></script>
