@@ -134,13 +134,27 @@
     if (c.race) setText("race", c.race);
     if (ngo.name) setText("ngoFoot", ngo.name);
     if (ngo.campaignCode) setText("code", ngo.campaignCode);
-    renderBank(ngo);
+    renderNotice(c);
+    renderBank(ngo, c);
     renderReportLink(c, ngo);
   }
 
-  function renderBank(ngo) {
+  /* Yumuşak açılış: dernek onayı gelene kadar hesap bilgileri ve bildirim
+     bağlantısı gizli. campaign.donationsOpen true yapıldığında ikisi de açılır. */
+  function renderNotice(c) {
+    var el = document.getElementById("notice");
+    if (!el || c.donationsOpen) { if (el) el.hidden = true; return; }
+    el.hidden = false;
+    el.innerHTML = "<b>Bağış kabulü " + esc(c.opensAtText || "yakında") + " açılıyor.</b> " +
+      "Bölgeleri, kuralları ve tişörtü şimdi inceleyebilirsin. " +
+      "Hesap bilgileri açılışta yayınlanacak.";
+  }
+
+  function renderBank(ngo, c) {
     var el = document.getElementById("bank");
-    if (!el || !ngo.iban) { if (el) el.hidden = true; return; }
+    if (!el) return;
+    if (!ngo.iban || !c.donationsOpen) { el.hidden = true; return; }
+    el.hidden = false;
     el.innerHTML =
       "<dl>" +
       row("Hesap adı", ngo.fullName || ngo.name) +
@@ -159,7 +173,18 @@
   function renderReportLink(c, ngo) {
     var a = document.getElementById("formLink");
     var hint = document.getElementById("formHint");
-    if (!c.contactEmail) { a.hidden = true; if (hint) hint.hidden = false; return; }
+    if (!c.contactEmail || !c.donationsOpen) {
+      a.hidden = true;
+      if (hint) {
+        hint.hidden = false;
+        hint.textContent = c.donationsOpen
+          ? "İletişim adresi henüz eklenmedi."
+          : "Bağış kabulü açıldığında bildirim bağlantısı burada olacak.";
+      }
+      return;
+    }
+    if (hint) hint.hidden = true;
+    a.hidden = false;
     var body = [
       "Marka adı:",
       "Bölge:",

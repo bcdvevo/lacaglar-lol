@@ -105,3 +105,7 @@ a{color:var(--gold)}
 a:hover{color:var(--ink)}
 .cta{color:#fff}
 .cta:hover{color:#fff}
+
+.notice{margin-top:18px;background:rgba(255,192,70,.09);border:1px solid rgba(255,192,70,.34);
+  border-radius:var(--radius);padding:14px 18px;font-size:15px}
+.notice b{color:var(--gold)}

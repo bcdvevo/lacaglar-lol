@@ -18,8 +18,10 @@
       "front": "runner-front.jpg",
       "back": "runner-back.svg"
     },
-    "contactEmail": "",
-    "site": "https://lacaglar.lol"
+    "contactEmail": "bagis@lacaglar.lol",
+    "site": "https://lacaglar.lol",
+    "donationsOpen": false,
+    "opensAtText": "Pazartesi 10.00"
   },
   "regions": [
     {
