@@ -6,7 +6,7 @@
   "closeISO": "2026-09-16T23:59:59+03:00",
   "site": "https://lacaglar.lol",
   "photo": "runner-front.jpg",
-  "donationsOpen": false,
+  "donationsOpen": true,
   "opensAtText": "Pazartesi 10.00",
   "contactEmail": "bagis@lacaglar.lol",
   "minToAppear": 100,
