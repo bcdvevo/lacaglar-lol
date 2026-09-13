@@ -51,3 +51,24 @@ Sitedeki önizleme ile baskı dosyası aynı fonksiyondan (`tshirt-layout.js`) �
 - [ ] Bağış bildirim formu (Tally) → `campaign.formUrl`
 - [ ] Taban tutarların gözden geçirilmesi
 - [ ] HYROX Race Director yazılı izni (vücut yüzeyi bu izne bağlı)
+
+## Yayın
+
+Alan adı `lacaglar.lol`, GoDaddy'de (NS: `ns13/ns14.domaincontrol.com`).
+Statik site olduğu için GitHub Pages yeterli: build yok, sadece dosya sunumu.
+
+GoDaddy DNS'e eklenecek kayıtlar:
+
+| Tip | Ad | Değer |
+|---|---|---|
+| A | @ | 185.199.108.153 |
+| A | @ | 185.199.109.153 |
+| A | @ | 185.199.110.153 |
+| A | @ | 185.199.111.153 |
+| CNAME | www | bcdvevo.github.io |
+
+Mevcut park kayıtları (`3.33.130.190`, `15.197.148.33`) silinecek.
+`CNAME` dosyası repoda; Pages açıldıktan sonra HTTPS sertifikası otomatik gelir
+(genelde 10-30 dakika).
+
+Not: GitHub Pages ücretsiz planda **public repo** ister.
