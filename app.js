@@ -153,7 +153,16 @@
   function renderBank(ngo, c) {
     var el = document.getElementById("bank");
     if (!el) return;
-    if (!ngo.iban || !c.donationsOpen) { el.hidden = true; return; }
+    var step = document.getElementById("stepPay");
+    if (!ngo.iban || !c.donationsOpen) {
+      el.hidden = true;
+      // hesap karti gizliyken "asagidaki hesaba" diyen adim bosluga isaret ediyor
+      if (step) step.innerHTML = "LÖSEV hesabına <strong>havale veya EFT</strong> yap. " +
+        "Hesap bilgileri ve açıklamaya yazılacak kampanya kodu, bağış kabulü açıldığında " +
+        "burada yayınlanacak. Kredi kartıyla online bağışta açıklama alanı olmadığı için " +
+        "hangi bağışın kime ait olduğunu ayırt edemiyoruz; bu yüzden yalnızca havale kabul ediyoruz.";
+      return;
+    }
     el.hidden = false;
     el.innerHTML =
       "<dl>" +
