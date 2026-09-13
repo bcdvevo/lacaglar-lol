@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bağış Koşusu — adın koşucunun üstünde</title>
+<title>Bağış Koşusu · adın koşucunun üstünde</title>
 <meta name="description" content="LÖSEV'e bağış yap, adın koşucunun HYROX İzmir'de giyeceği tişörte basılsın. Punto bağış tutarına göre. Para bize uğramaz.">
-<meta property="og:title" content="Bağış Koşusu — adın koşucunun üstünde">
+<meta property="og:title" content="Bağış Koşusu · adın koşucunun üstünde">
 <meta property="og:description" content="LÖSEV'e bağış yap, adın yarış tişörtüne basılsın. Ne kadar bağışlarsan puntun o kadar büyük.">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -15,9 +15,9 @@
   <div class="wrap top-in">
     <div class="brand">BAĞIŞ&nbsp;KOŞUSU</div>
     <div class="counters">
-      <div class="counter"><span class="k" id="total">—</span><span class="l">toplanan bağış</span></div>
-      <div class="counter"><span class="k" id="donorCount">—</span><span class="l">bağışçı</span></div>
-      <div class="counter"><span class="k" id="countdown">—</span><span class="l">kapanışa</span></div>
+      <div class="counter"><span class="k" id="total">·</span><span class="l">toplanan bağış</span></div>
+      <div class="counter"><span class="k" id="donorCount">·</span><span class="l">bağışçı</span></div>
+      <div class="counter"><span class="k" id="countdown">·</span><span class="l">kapanışa</span></div>
     </div>
   </div>
 </header>
@@ -34,21 +34,20 @@
         <em>Ne kadar bağışlarsan puntun o kadar büyük.</em>
       </p>
       <p class="lede small">
-        Para bu siteye uğramıyor. Bağışı doğrudan LÖSEV'in kendi hesabına yapıyorsun;
+        Para bu siteye uğramıyor. Bağışı doğrudan LÖSEV'in kendi hesabına yapıyorsun,
         biz yalnızca makbuzu doğrulayıp adını listeye ekliyoruz, komisyon almıyoruz.
       </p>
       <p class="lede small">
-        <strong>Yarış: 19 Eylül 2026 Cumartesi</strong>, Fuar İzmir. Bağış kapanışı
-        16 Eylül 23.59.
+        <strong>Yarış: 19 Eylül 2026 Cumartesi</strong>, Fuar İzmir. Bağış kapanışı 16 Eylül 23.59.
       </p>
     </div>
     <figure class="hero-photo">
-      <img id="runnerImg" src="" alt="">
+      <img id="runnerImg" src="assets/runner-front.jpg" alt="" width="834" height="2000" fetchpriority="high">
       <figcaption id="photoCap"></figcaption>
     </figure>
   </section>
 
-  <section class="wrap how">
+  <section class="wrap how rise">
     <h2>Nasıl bağış yapılır</h2>
     <ol class="steps">
       <li>
@@ -56,11 +55,21 @@
         <div class="gen">
           <input id="nameInput" type="text" maxlength="24" placeholder="Acme Yazılım" autocomplete="off"
                  aria-label="Tişörte yazılacak isim">
-          <output id="genAddr" class="addr">—</output>
+          <output id="genAddr" class="addr">…</output>
           <button id="copyAddr" type="button" class="copy">Kopyala</button>
         </div>
-        <p class="hint" id="genHint">İsim en fazla 24 karakter. Bu adres bağışını tanımak için;
-          LÖSEV'in bağış kaydına ve bizim listemize işlenir. Alt sınır ₺100.</p>
+        <p class="hint" id="genHint">İsim en fazla 24 karakter. Bu adres bağışını tanımak için kullanılır. LÖSEV'in bağış kaydına ve bizim listemize işlenir. Alt sınır ₺100.</p>
+
+        <div class="sizer">
+          <div class="sizer-row">
+            <label for="amtRange">Ne kadar bağışlarsan adın bu boyda çıkar</label>
+            <input id="amtRange" type="range" min="100" max="50000" step="100" value="2500"
+                   aria-label="Bağış tutarı">
+            <span class="amt" id="amtLabel">₺2.500</span>
+          </div>
+          <div class="sizer-stage"><span id="sizePreview">Adın</span></div>
+          <p class="sizer-note" id="sizeNote"></p>
+        </div>
       </li>
       <li>
         <strong>LÖSEV'in bağış sayfasından bağışını yap.</strong>
@@ -84,9 +93,17 @@
     </details>
   </section>
 
-  <section class="wrap">
-    <h2>Tişört</h2>
-    <p class="sub">Ön ve arka aynı baskı. Liste kapanışta donar, dosya doğrudan buradan üretilir.</p>
+  <section class="wrap rise">
+    <h2>Yarış günü basılacak olan bu.</h2>
+    <p class="sub">Bağış tutarı puntoyu belirliyor. Liste kapanışta donuyor, baskı dosyası
+      doğrudan bu dizgiden üretiliyor.</p>
+
+    <div class="print" id="print"></div>
+    <div class="printfoot">
+      <span id="printMeta"></span>
+      <span><b>Ön ve arka aynı baskı.</b> 300 isme kadar yer var.</span>
+    </div>
+
     <div class="tees">
       <div class="tee"><div class="teebox" id="teeFront"></div><span class="teelabel">Ön</span></div>
       <div class="tee"><div class="teebox" id="teeBack"></div><span class="teelabel">Arka</span></div>
@@ -94,20 +111,18 @@
     <p class="warn" id="shirtWarn" hidden></p>
   </section>
 
-  <section class="wrap">
+  <section class="wrap rise">
     <h2>Bağışçılar</h2>
     <p class="sub" id="donorSub"></p>
     <ol class="donors" id="donors"></ol>
   </section>
 
 
-  <section class="wrap rules">
+  <section class="wrap rules rise">
     <h2>Kurallar</h2>
     <ol>
-      <li>Herkes istediği tutarda bağışlayabilir. Listede ve tişörtte görünmek için alt sınır <strong id="minAmount">—</strong>.</li>
-      <li><strong>Punto görecelidir.</strong> En yüksek bağışa ve toplam isim sayısına göre hesaplanır.
-          Sen bağış yaptıktan sonra daha büyük bağışlar gelirse puntun küçülür. Kapanış anındaki
-          hâli basılır, önizlemede gördüğün ara durumdur.</li>
+      <li>Herkes istediği tutarda bağışlayabilir. Listede ve tişörtte görünmek için alt sınır <strong id="minAmount">…</strong>.</li>
+      <li><strong>Punto görecelidir.</strong> En yüksek bağışa ve toplam isim sayısına göre hesaplanır. Sen bağış yaptıktan sonra daha büyük bağışlar gelirse puntun küçülür. Kapanış anındaki hâli basılır; önizlemede gördüğün ara durumdur.</li>
       <li><strong>Kimse listeden çıkarılmaz.</strong> Şu anki tasarımda 300 isme kadar yer var;
           isim arttıkça bütün puntolar oranı bozulmadan küçülür. Alt bantta punto küçüldüğü için
           isimler yarış fotoğrafında okunmayabilir, yakından okunur.</li>
@@ -124,16 +139,16 @@
           siyasi içerik.</li>
       <li>Uygun görülmeyen isim reddedilir. Bağış LÖSEV'de kalır, katkı "isimsiz destekçi" olarak
           listelenir, baskıya girmez.</li>
-      <li><strong>Koşucu yarışa çıkamazsa</strong> (sakatlık, organizasyon iptali, kural engeli)
+      <li><strong>Koşucu yarışa çıkamazsa</strong> (sakatlık, organizasyon iptali ya da kural engeli)
           tişört yine basılır ve fotoğraflanır, liste yayında kalır. Bağışın LÖSEV'de kalır.
           Bu bir bağıştır; garantili bir reklam hizmeti değildir.</li>
     </ol>
   </section>
 </main>
 
-  <section class="wrap rules">
+  <section class="wrap rules rise">
     <h2>Kim yapıyor, ne saklıyoruz</h2>
-    <p>Bu kampanya <strong id="operator">—</strong> tarafından yürütülen <strong>bağımsız bir
+    <p>Bu kampanya <strong id="operator">…</strong> tarafından yürütülen <strong>bağımsız bir
       girişimdir.</strong> LÖSEV tarafından düzenlenmemiştir ve LÖSEV'in resmi bir kampanyası
       değildir. HYROX ile de ilişkili ya da onaylı değildir. Bağışlar LÖSEV'in kendi resmi
       banka hesabına yapılır.</p>
@@ -145,7 +160,7 @@
       kullanılır, üçüncü kişilerle paylaşılmaz ve kampanya bittikten sonra silinir.
       Adının listeden kaldırılmasını istersen yaz; baskı yapılmadan önce gelen talepleri
       karşılayabiliriz, baskıdan sonra fiziksel olarak mümkün değil.</p>
-    <p><strong>İletişim:</strong> <a id="contactLink" href="#">—</a></p>
+    <p><strong>İletişim:</strong> <a id="contactLink" href="#">…</a></p>
   </section>
 
 <footer class="wrap">

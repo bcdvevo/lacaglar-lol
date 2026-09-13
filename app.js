@@ -31,27 +31,84 @@
   }
   function pad(n) { return String(n).padStart(2, "0"); }
 
-  /* --- tişört: ön ve arka aynı baskı, tek dizgiden --- */
-  function renderTees() {
+  /* --- baskı: sayfanın kahramanı. Ön ve arka aynı, tek dizgiden --- */
+  function renderPrint() {
     var list = onShirt();
+    var wall = document.getElementById("print");
     var front = document.getElementById("teeFront");
     var back = document.getElementById("teeBack");
     var warn = document.getElementById("shirtWarn");
+    var meta = document.getElementById("printMeta");
 
     if (!list.length) {
-      var empty = '<p class="teeempty">İlk isim seni bekliyor.</p>';
-      front.innerHTML = empty; back.innerHTML = empty; warn.hidden = true;
+      wall.innerHTML = '<p class="empty">İlk isim seni bekliyor.</p>';
+      front.innerHTML = ""; back.innerHTML = "";
+      meta.textContent = "Henüz kimse yok.";
+      warn.hidden = true;
       return;
     }
     var res = TL.layout(list, Object.assign({ minAmount: state.c.minToAppear }, state.c.print));
-    var svg = TL.toTeeSvg(res, { fill: "#111" });
-    front.innerHTML = svg;
-    back.innerHTML = svg; // aynı tasarım, iki yüz
+    wall.innerHTML = TL.toSvg(res, { fill: "#0f0f12", pad: 10, bg: "#f3f3f0" });
+    var tee = TL.toTeeSvg(res, { fill: "#0f0f12" });
+    front.innerHTML = tee;
+    back.innerHTML = tee;
+
+    var sizes = res.lines.flatMap(function (l) { return l.items.map(function (i) { return i.size; }); });
+    meta.innerHTML = "<b>" + list.length + " isim</b> · en büyük punto " +
+      Math.max.apply(null, sizes) + ", en küçük " + Math.min.apply(null, sizes);
+
     if (res.overflow.length) {
       warn.hidden = false;
-      warn.textContent = "Tişört kapasitesi doldu: " + res.overflow.length +
-        " isim baskıya giremiyor. Kurallar gereği en küçük puntolular kesilir.";
+      warn.textContent = res.overflow.length + " isim baskı alanına sığmadı. " +
+        "Tasarımı büyütüyoruz; kimse listeden çıkarılmayacak.";
     } else warn.hidden = true;
+  }
+
+  /* Tutar → punto önizlemesi. Baskıyla aynı fonksiyonu kullanır: gösterilen
+     boyut tahmin değil, o tutarın gerçekten alacağı boyut. */
+  function setupSizer() {
+    var range = document.getElementById("amtRange");
+    var label = document.getElementById("amtLabel");
+    var stage = document.getElementById("sizePreview");
+    var note = document.getElementById("sizeNote");
+    var input = document.getElementById("nameInput");
+    if (!range) return;
+
+    function render() {
+      var amount = Number(range.value);
+      label.textContent = money.format(amount);
+      var top = Math.max(amount, state.donors.reduce(function (m, d) {
+        return Math.max(m, d.total); }, 0));
+      var pt = TL.sizeFor(amount, top, state.c.print);
+      // sahnedeki genişlik baskı alanının genişliğine oranlanır
+      var stageW = stage.parentElement.clientWidth - 32;
+      var scale = stageW / (state.c.print.maxWidth || 620);
+      stage.style.fontSize = Math.max(13, pt * scale * 1.9) + "px";
+      stage.textContent = (input && input.value.trim()) || "Adın";
+      note.textContent = state.donors.length
+        ? "Şu anki en yüksek bağış " + money.format(top) + ". Puntolar ona göre ölçeklenir."
+        : "İlk bağış yapan en büyük puntoyu alır.";
+    }
+    range.addEventListener("input", render);
+    if (input) input.addEventListener("input", render);
+    window.addEventListener("resize", render);
+    render();
+  }
+
+  /* Tek yetkili hareket: bölümler ilk göründüklerinde yükselir. */
+  function setupRise() {
+    var els = document.querySelectorAll(".rise");
+    if (!("IntersectionObserver" in window) ||
+        matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      els.forEach(function (e) { e.classList.add("in"); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
+      });
+    }, { rootMargin: "0px 0px -12% 0px" });
+    els.forEach(function (e) { io.observe(e); });
   }
 
   /* --- bağışçı listesi --- */
@@ -130,7 +187,7 @@
 
     function update() {
       var slug = slugify(input.value);
-      if (!slug) { out.textContent = "—"; btn.disabled = true; return; }
+      if (!slug) { out.textContent = "…"; btn.disabled = true; return; }
       out.textContent = slug + "@" + c.mailDomain;
       btn.disabled = false;
     }
@@ -216,7 +273,7 @@
   ]).then(function (res) {
     state.c = res[0];
     state.donors = res[1].donors || [];
-    renderCampaign(); renderTees(); renderDonors();
+    renderCampaign(); renderPrint(); renderDonors(); setupSizer(); setupRise();
     tick(); setInterval(tick, 1000);
   }).catch(function (e) {
     document.getElementById("donors").innerHTML =

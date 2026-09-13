@@ -84,8 +84,9 @@
     var pad = opts.pad || 30, fill = opts.fill || "#111";
     var g = namesGroup(result, fill);
     var w = result.maxWidth + pad * 2, h = g.height + pad * 2;
+    var bg = opts.bg ? '<rect width="' + w + '" height="' + h.toFixed(0) + '" fill="' + opts.bg + '" rx="10"/>' : "";
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + w + " " + h.toFixed(0) +
-      '" width="' + w + '" height="' + h.toFixed(0) + '">' +
+      '" width="' + w + '" height="' + h.toFixed(0) + '">' + bg +
       '<g transform="translate(' + pad + "," + pad + ')">' + g.svg + "</g></svg>";
   }
 
